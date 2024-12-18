@@ -1,0 +1,80 @@
+# Installation d'Active Directory, DNS et DHCP sur un serveur Windows
+
+## Étape 1 : Installation des rôles et fonctionnalités
+1. **Ouvrir le Gestionnaire de serveur** :
+   - Cliquez sur le bouton **Démarrer** et ouvrez **Gestionnaire de serveur**.
+
+2. **Ajouter des rôles et fonctionnalités** :
+   - Dans le Gestionnaire de serveur, cliquez sur **Gérer** > **Ajouter des rôles et fonctionnalités**.
+   - Cliquez sur **Suivant** jusqu'à l'écran **Sélection du type d'installation**, puis choisissez **Installation basée sur un rôle ou une fonctionnalité**.
+   - Cliquez sur **Suivant**.
+
+3. **Sélectionner le serveur** :
+   - Choisissez le serveur sur lequel vous installez les rôles.
+
+4. **Sélectionner les rôles** :
+   - **Active Directory Domain Services (AD DS)** :
+     - Cochez **Services de domaine Active Directory**.
+     - Acceptez d'ajouter les fonctionnalités nécessaires.
+   - **DNS Server** :
+     - Cochez **Serveur DNS** et acceptez d'ajouter les fonctionnalités.
+   - **DHCP Server** :
+     - Cochez **Serveur DHCP** et acceptez d'ajouter les fonctionnalités.
+   - Cliquez sur **Suivant**.
+
+5. **Installer** :
+   - Cliquez sur **Installer**. Attendez que l'installation soit terminée.
+   - Redémarrez le serveur si demandé.
+
+---
+
+## Étape 2 : Configuration d'Active Directory
+1. **Promouvoir le serveur en contrôleur de domaine** :
+   - Dans le Gestionnaire de serveur, cliquez sur la notification "Configuration requise pour AD DS".
+   - Cliquez sur **Promouvoir ce serveur en contrôleur de domaine**.
+   - Choisissez :
+     - **Ajouter une nouvelle forêt** si c'est un nouveau domaine.
+     - Donnez un nom au domaine (ex : `SolarEcoSolutions.net`).
+   - Configurez le niveau fonctionnel de la forêt et du domaine.
+   - Entrez un mot de passe pour le mode de récupération des services d'annuaire (DSRM).
+   - Validez et redémarrez le serveur.
+
+---
+
+## Étape 3 : Configuration du serveur DNS
+1. **Vérifier la configuration DNS** :
+   - Le rôle DNS est configuré automatiquement avec AD DS.
+   - Assurez-vous que le serveur DNS pointe vers lui-même dans les paramètres réseau (IP fixe).
+
+2. **Ajouter des zones DNS si nécessaire** :
+   - Ouvrez **DNS Manager** (Gestionnaire DNS).
+   - Ajoutez des zones directes et inverses selon vos besoins.
+
+---
+
+## Étape 4 : Configuration du serveur DHCP
+1. **Ouvrir la console DHCP** :
+   - Allez dans **Outils** > **DHCP** dans le Gestionnaire de serveur.
+
+2. **Configurer une nouvelle étendue DHCP** :
+   - Faites un clic droit sur **IPv4** > **Nouvelle étendue**.
+   - Donnez un nom à l'étendue (ex : Étendue LAN).
+   - Configurez une plage d'adresses (ex : 192.168.1.100 à 192.168.1.200).
+   - Configurez les options DHCP (ex : passerelle par défaut, serveur DNS).
+
+3. **Activer le DHCP** :
+   - Faites un clic droit sur le serveur DHCP et sélectionnez **Autoriser**.
+
+---
+
+## Vérifications finales
+1. **Vérifier les services** :
+   - Active Directory, DNS et DHCP doivent apparaître comme "En cours d'exécution" dans le Gestionnaire de serveur.
+
+2. **Tester le domaine** :
+   - Joignez un ordinateur client au domaine pour vérifier la configuration.
+
+3. **Tester le DHCP** :
+   - Configurez un client en IP automatique et vérifiez qu'il obtient une adresse depuis le serveur DHCP.
+
+
