@@ -12,4 +12,4 @@ Par exemple: SRV-linus-GLPI
 # Serveur Xivo
 
 session: Wilder/wilder
-mdp admin: wilderxivo
+Console admin: root/Wilderxivo
