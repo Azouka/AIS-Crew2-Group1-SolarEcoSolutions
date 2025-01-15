@@ -1,8 +1,0 @@
-# PRÉ-REQUIS
-- Il faut un serveur sous Debian avec des accès en root
-- Récupérer le script d'installation avec la commande suivante:
- **wget https://github.com/FreePBX/sng_freepbx_debian_install/raw/master/sng_freepbx_debian_install.sh -O /tmp/sng_freepbx_debian_install.sh**
-
-# EXECUTION DU SCRIPT
-
-**bash /tmp/sng_freepbx_debian_install.sh**
