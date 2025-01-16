@@ -13,3 +13,7 @@ Par exemple: SRV-linus-GLPI
 
 session: Wilder/wilder
 Console admin: root/Wilderxivo
+
+# serveur mail
+
+postmaster@mail.ess.net / wildermail
