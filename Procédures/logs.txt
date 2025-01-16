@@ -1,2 +1,4 @@
 [16/01/2025]
-- Seif : à mis en place le système de Logs
+Seif : à mis en place le système de Logs
+Seif : installer le SRV MAIL avec POSTE.IO
+Brice : fini de configurer POSTE.IO 
