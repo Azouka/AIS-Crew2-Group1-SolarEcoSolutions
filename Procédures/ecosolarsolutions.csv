@@ -1,0 +1,55 @@
+﻿fonction;nom;prenom;service
+Responsable atelier;Davie;Ivan;Atelier
+Technicienne maintenance 1;Hyatt;Marcy;Atelier
+Technicien maintenance 2;Vancleave;Jean;Atelier
+Directeur général;Wally;Adam;Direction
+Assistante DG;Herminia;Oliva;Direction
+Directrice Admin. & Fin.;Goosby;Charlotte;Dpt Administratif & Financier
+Assistant DAF;Valazquez;Leon;Dpt Administratif & Financier
+Comptable;Fe;Cécile;Dpt Administratif & Financier
+Employé administratif 1;Tamar;Mohammed;Dpt Administratif & Financier
+Employé administratif 2;Ebner;Sandie;Dpt Administratif & Financier
+Responsable expédition;Fare;Vincent;Expédition
+Préparateur commande 1;Otis;Laura;Expédition
+Préparateur commande 2;Cushman;Marc;Expédition
+Informaticien;Elijah;Blakley;Informatique
+Stagiaire alternance;Nguyet;Catlett;Informatique
+Responsable logistique;Penning;Sharilyn;Logistique/approvisionnement
+Acheteur;Przybyla;Leonardo;Logistique/approvisionnement
+Agent logistique 1;Bradwell;Teri;Logistique/approvisionnement
+Agent logistique 2;Galasso;Dominique;Logistique/approvisionnement
+Agent logistique 3;Waltrip;Antoine;Logistique/approvisionnement
+Directeur production - DG Adjoint;Phyllis;Biondo;Production
+Responsable production;Twiford;Isabelle;Production
+Opérateur 1;Bragdon;Elene;Production
+Opérateur 2;Bakley;Sandra;Production
+Opérateur 3;Rubalcava;Jérémy;Production
+Opérateur 4;Schewe;Maye;Production
+Opérateur 5;Isenberg;Edmond;Production
+Opérateur 6;Vanarsdale;Luc;Production
+Opérateur 7;Tokarski;Laurent;Production
+Opérateur 8;Plamondon;Elise;Production
+Opérateur 9;Shoaf;Marion;Production
+Opérateur 10;Garber;Michel;Production
+Opérateur 11;Blalock;Cassandra;Production
+Opérateur 12;Yarberry;Julie;Production
+Opérateur 13;Gutter;Serena;Production
+Opérateur 14;Bolden;Damien;Production
+Opérateur 15;Chilcott;Baptiste;Production
+Opérateur 16;Cosme;Melissa;Production
+Opérateur 17;Hae;Patrick;Production
+Opérateur 18;Towers;Thibault;Production
+Conductrice de machines 1;Larock;Caroline;Production
+Conducteur de machines 2;Demelo;Pierre;Production
+Conducteur de machines 3;Gerardo;Lucien;Production
+Conducteur de machines 4;Ria;Mathis;Production
+Responsable R&D;Letts;Valérie;R&D/qualité
+Technicien R&D 1;Babb;Violaine;R&D/qualité
+Technicien R&D 2;Velva;William;R&D/qualité
+Directeur commercial;Nguyen;Basile;Service commercial
+Assistant commercial;Shonda;Philippe;Service commercial
+Responsable produits;Ben-Talo;Ahmed;Service commercial
+Commercial 1;Revard;Claude;Service commercial
+Commercial 2;Velasco;Lidia;Service commercial
+Commercial 3;Persaud;Guy;Service commercial
+Commercial 4;Drucilla;Colin;Service commercial
