@@ -1,21 +1,77 @@
-try {
-    New-ADComputer `
-        -Name $computerName `
-        -SamAccountName $computerAccountName `
-        -Path $ouPath `
-        -Enabled $true `
-        -Description "Ordinateur associé à l'utilisateur $($user.SamAccountName)" `
-        -OperatingSystem "Windows 10"
-    Write-Host "Ordinateur $computerName créé avec succès."
-}
-catch {
-    Write-Host "Erreur lors de la création de l'ordinateur $computerName: $($_.Exception.Message)"
+# Importer le module Active Directory
+Import-Module ActiveDirectory
+
+# Définir le domaine de base
+$domain = "DC=ecosolarsolution,DC=local"
+
+# Liste complète des utilisateurs avec leurs informations
+$users = @(
+    @{GivenName="Marcy"; Surname="Hyatt"; SamAccountName="mhyatt"; OU="Atelier"; Description="Technicienne maintenance 1"},
+    @{GivenName="Jean"; Surname="Vancleave"; SamAccountName="jvancleave"; OU="Atelier"; Description="Technicien maintenance 2"},
+    @{GivenName="Sharilyn"; Surname="Penning"; SamAccountName="spenning"; OU="Logistique/approvisionnement"; Description="Responsable logistique"},
+    @{GivenName="Leonardo"; Surname="Przybyla"; SamAccountName="lprzybyla"; OU="Logistique/approvisionnement"; Description="Acheteur"},
+    @{GivenName="Teri"; Surname="Bradwell"; SamAccountName="tbradwell"; OU="Logistique/approvisionnement"; Description="Agent logistique 1"},
+    @{GivenName="Dominique"; Surname="Galasso"; SamAccountName="dgalasso"; OU="Logistique/approvisionnement"; Description="Agent logistique 2"},
+    @{GivenName="Antoine"; Surname="Waltrip"; SamAccountName="awaltrip"; OU="Logistique/approvisionnement"; Description="Agent logistique 3"},
+    @{GivenName="Isabelle"; Surname="Twiford"; SamAccountName="itwiford"; OU="Production"; Description="Responsable production"},
+    @{GivenName="Elene"; Surname="Bragdon"; SamAccountName="ebragdon"; OU="Production"; Description="Opérateur 1"},
+    @{GivenName="Sandra"; Surname="Bakley"; SamAccountName="sbakley"; OU="Production"; Description="Opérateur 2"},
+    @{GivenName="Jérémy"; Surname="Rubalcava"; SamAccountName="jrubalcava"; OU="Production"; Description="Opérateur 3"},
+    @{GivenName="Maye"; Surname="Schewe"; SamAccountName="mschewe"; OU="Production"; Description="Opérateur 4"},
+    @{GivenName="Edmond"; Surname="Isenberg"; SamAccountName="eisenberg"; OU="Production"; Description="Opérateur 5"},
+    @{GivenName="Luc"; Surname="Vanarsdale"; SamAccountName="lvanarsdale"; OU="Production"; Description="Opérateur 6"},
+    @{GivenName="Laurent"; Surname="Tokarski"; SamAccountName="ltokarski"; OU="Production"; Description="Opérateur 7"},
+    @{GivenName="Elise"; Surname="Plamondon"; SamAccountName="eplamondon"; OU="Production"; Description="Opérateur 8"},
+    @{GivenName="Marion"; Surname="Shoaf"; SamAccountName="mshoaf"; OU="Production"; Description="Opérateur 9"},
+    @{GivenName="Michel"; Surname="Garber"; SamAccountName="mgarber"; OU="Production"; Description="Opérateur 10"},
+    @{GivenName="Cassandra"; Surname="Blalock"; SamAccountName="cblalock"; OU="Production"; Description="Opérateur 11"},
+    @{GivenName="Julie"; Surname="Yarberry"; SamAccountName="jyarberry"; OU="Production"; Description="Opérateur 12"},
+    @{GivenName="Serena"; Surname="Gutter"; SamAccountName="sgutter"; OU="Production"; Description="Opérateur 13"},
+    @{GivenName="Damien"; Surname="Bolden"; SamAccountName="dbolden"; OU="Production"; Description="Opérateur 14"},
+    @{GivenName="Baptiste"; Surname="Chilcott"; SamAccountName="bchilcott"; OU="Production"; Description="Opérateur 15"},
+    @{GivenName="Melissa"; Surname="Cosme"; SamAccountName="mcosme"; OU="Production"; Description="Opérateur 16"},
+    @{GivenName="Patrick"; Surname="Hae"; SamAccountName="phae"; OU="Production"; Description="Opérateur 17"},
+    @{GivenName="Thibault"; Surname="Towers"; SamAccountName="ttowers"; OU="Production"; Description="Opérateur 18"},
+    @{GivenName="Caroline"; Surname="Larock"; SamAccountName="clarock"; OU="Production"; Description="Conductrice de machines 1"},
+    @{GivenName="Pierre"; Surname="Demelo"; SamAccountName="pdemelo"; OU="Production"; Description="Conducteur de machines 2"},
+    @{GivenName="Lucien"; Surname="Gerardo"; SamAccountName="lgerardo"; OU="Production"; Description="Conducteur de machines 3"},
+    @{GivenName="Mathis"; Surname="Ria"; SamAccountName="mria"; OU="Production"; Description="Conducteur de machines 4"}
+)
+
+# Parcourir chaque utilisateur et créer l'ordinateur correspondant
+$counter = 1  # Compteur pour les noms d'ordinateurs
+
+foreach ($user in $users) {
+    $ouPath = "OU=$($user.OU),$domain"
+    $computerName = "ECL_" + $counter.ToString("D3")  # Format ECL_001, ECL_002, etc.
+    $computerAccountName = "$computerName$($domain)"
+
+    # Créer l'ordinateur dans Active Directory
+    try {
+        New-ADComputer `
+            -Name $computerName `
+            -SamAccountName $computerAccountName `
+            -Path $ouPath `
+            -Enabled $true `
+            -Description "Ordinateur associé à l'utilisateur $($user.SamAccountName)" `
+            -OperatingSystem "Windows 10"
+        Write-Host "Ordinateur $computerName créé avec succès."
+    }
+    catch {
+        Write-Host "Erreur lors de la création de l'ordinateur $computerName: $($_.Exception.Message)"
+    }
+
+    # Associer l'utilisateur à l'ordinateur
+    try {
+        Set-ADComputer -Identity $computerAccountName -Description "Ordinateur pour $($user.SamAccountName)"
+        Write-Host "L'ordinateur $computerName a été associé à l'utilisateur $($user.SamAccountName)."
+    }
+    catch {
+        Write-Host "Erreur lors de l'association de l'ordinateur $computerName avec l'utilisateur $($user.SamAccountName): $($_.Exception.Message)"
+    }
+
+    # Incrémenter le compteur pour le prochain ordinateur
+    $counter++
 }
 
-try {
-    Set-ADComputer -Identity $computerAccountName -Description "Ordinateur pour $($user.SamAccountName)"
-    Write-Host "L'ordinateur $computerName a été associé à l'utilisateur $($user.SamAccountName)."
-}
-catch {
-    Write-Host "Erreur lors de l'association de l'ordinateur $computerName avec l'utilisateur $($user.SamAccountName): $($_.Exception.Message)"
-}
+Write-Host "Tous les ordinateurs ont été créés et associés aux utilisateurs."
