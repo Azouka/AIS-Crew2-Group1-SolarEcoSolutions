@@ -4,85 +4,6 @@ Import-Module ActiveDirectory
 # Définir le domaine de base
 $domain = "DC=ecosolarsolution,DC=local"
 
-# Liste des utilisateurs avec leurs informations
-$users = @(
-    @{GivenName="Marcy"; Surname="Hyatt"; SamAccountName="mhyatt"; OU="Atelier"; Description="Technicienne maintenance 1"},
-    @{GivenName="Jean"; Surname="Vancleave"; SamAccountName="jvancleave"; OU="Atelier"; Description="Technicien maintenance 2"},
-    @{GivenName="Sharilyn"; Surname="Penning"; SamAccountName="spenning"; OU="Logistique/approvisionnement"; Description="Responsable logistique"},
-    @{GivenName="Leonardo"; Surname="Przybyla"; SamAccountName="lprzybyla"; OU="Logistique/approvisionnement"; Description="Acheteur"},
-    @{GivenName="Teri"; Surname="Bradwell"; SamAccountName="tbradwell"; OU="Logistique/approvisionnement"; Description="Agent logistique 1"},
-    @{GivenName="Dominique"; Surname="Galasso"; SamAccountName="dgalasso"; OU="Logistique/approvisionnement"; Description="Agent logistique 2"},
-    @{GivenName="Antoine"; Surname="Waltrip"; SamAccountName="awaltrip"; OU="Logistique/approvisionnement"; Description="Agent logistique 3"},
-    @{GivenName="Isabelle"; Surname="Twiford"; SamAccountName="itwiford"; OU="Production"; Description="Responsable production"},
-    @{GivenName="Elene"; Surname="Bragdon"; SamAccountName="ebragdon"; OU="Production"; Description="Opérateur 1"},
-    @{GivenName="Sandra"; Surname="Bakley"; SamAccountName="sbakley"; OU="Production"; Description="Opérateur 2"},
-    @{GivenName="Jérémy"; Surname="Rubalcava"; SamAccountName="jrubalcava"; OU="Production"; Description="Opérateur 3"},
-    @{GivenName="Maye"; Surname="Schewe"; SamAccountName="mschewe"; OU="Production"; Description="Opérateur 4"},
-    @{GivenName="Edmond"; Surname="Isenberg"; SamAccountName="eisenberg"; OU="Production"; Description="Opérateur 5"},
-    @{GivenName="Luc"; Surname="Vanarsdale"; SamAccountName="lvanarsdale"; OU="Production"; Description="Opérateur 6"},
-    @{GivenName="Laurent"; Surname="Tokarski"; SamAccountName="ltokarski"; OU="Production"; Description="Opérateur 7"},
-    @{GivenName="Elise"; Surname="Plamondon"; SamAccountName="eplamondon"; OU="Production"; Description="Opérateur 8"},
-    @{GivenName="Marion"; Surname="Shoaf"; SamAccountName="mshoaf"; OU="Production"; Description="Opérateur 9"},
-    @{GivenName="Michel"; Surname="Garber"; SamAccountName="mgarber"; OU="Production"; Description="Opérateur 10"},
-    @{GivenName="Cassandra"; Surname="Blalock"; SamAccountName="cblalock"; OU="Production"; Description="Opérateur 11"},
-    @{GivenName="Julie"; Surname="Yarberry"; SamAccountName="jyarberry"; OU="Production"; Description="Opérateur 12"},
-    @{GivenName="Serena"; Surname="Gutter"; SamAccountName="sgutter"; OU="Production"; Description="Opérateur 13"},
-    @{GivenName="Damien"; Surname="Bolden"; SamAccountName="dbolden"; OU="Production"; Description="Opérateur 14"},
-    @{GivenName="Baptiste"; Surname="Chilcott"; SamAccountName="bchilcott"; OU="Production"; Description="Opérateur 15"},
-    @{GivenName="Melissa"; Surname="Cosme"; SamAccountName="mcosme"; OU="Production"; Description="Opérateur 16"},
-    @{GivenName="Patrick"; Surname="Hae"; SamAccountName="phae"; OU="Production"; Description="Opérateur 17"},
-    @{GivenName="Thibault"; Surname="Towers"; SamAccountName="ttowers"; OU="Production"; Description="Opérateur 18"},
-    @{GivenName="Caroline"; Surname="Larock"; SamAccountName="clarock"; OU="Production"; Description="Conductrice de machines 1"},
-    @{GivenName="Pierre"; Surname="Demelo"; SamAccountName="pdemelo"; OU="Production"; Description="Conducteur de machines 2"},
-    @{GivenName="Lucien"; Surname="Gerardo"; SamAccountName="lgerardo"; OU="Production"; Description="Conducteur de machines 3"},
-    @{GivenName="Mathis"; Surname="Ria"; SamAccountName="mria"; OU="Production"; Description="Conducteur de machines 4"},
-    @{GivenName="Valérie"; Surname="Letts"; SamAccountName="vletts"; OU="R&D/qualité"; Description="Responsable R&D"},
-    @{GivenName="Violaine"; Surname="Babb"; SamAccountName="vbabb"; OU="R&D/qualité"; Description="Technicien R&D 1"},
-    @{GivenName="William"; Surname="Velva"; SamAccountName="wvelva"; OU="R&D/qualité"; Description="Technicien R&D 2"},
-    @{GivenName="Basile"; Surname="Nguyen"; SamAccountName="bnguyen"; OU="Service commercial"; Description="Directeur commercial"},
-    @{GivenName="Philippe"; Surname="Shonda"; SamAccountName="pshonda"; OU="Service commercial"; Description="Assistant commercial"},
-    @{GivenName="Ahmed"; Surname="Ben-Talo"; SamAccountName="abentalo"; OU="Service commercial"; Description="Responsable produits"},
-    @{GivenName="Claude"; Surname="Revard"; SamAccountName="crevard"; OU="Service commercial"; Description="Commercial 1"},
-    @{GivenName="Lidia"; Surname="Velasco"; SamAccountName="lvelasco"; OU="Service commercial"; Description="Commercial 2"},
-    @{GivenName="Guy"; Surname="Persaud"; SamAccountName="gpersaud"; OU="Service commercial"; Description="Commercial 3"},
-    @{GivenName="Colin"; Surname="Drucilla"; SamAccountName="cdrucilla"; OU="Service commercial"; Description="Commercial 4"},
-    @{GivenName="Vincent"; Surname="Fare"; SamAccountName="vfare"; OU="Expédition"; Description="Responsable expédition"},
-    @{GivenName="Laura"; Surname="Otis"; SamAccountName="lotis"; OU="Expédition"; Description="Préparateur commande 1"},
-    @{GivenName="Marc"; Surname="Cushman"; SamAccountName="mcushman"; OU="Expédition"; Description="Préparateur commande 2"},
-    @{GivenName="Charlotte"; Surname="Goosby"; SamAccountName="cgoosby"; OU="Dpt Administratif & Financier"; Description="Directrice Admin. & Fin."},
-    @{GivenName="Leon"; Surname="Valazquez"; SamAccountName="lvalazquez"; OU="Dpt Administratif & Financier"; Description="Assistant DAF"},
-    @{GivenName="Cécile"; Surname="Fe"; SamAccountName="cfe"; OU="Dpt Administratif & Financier"; Description="Comptable"},
-    @{GivenName="Mohammed"; Surname="Tamar"; SamAccountName="mtamar"; OU="Dpt Administratif & Financier"; Description="Employé administratif 1"},
-    @{GivenName="Sandie"; Surname="Ebner"; SamAccountName="sebner"; OU="Dpt Administratif & Financier"; Description="Employé administratif 2"}
-)
-
-# Parcourir chaque utilisateur et le créer dans l'OU appropriée
-foreach ($user in $users) {
-    $ouPath = "OU=$($user.OU),$domain"
-    $password = ConvertTo-SecureString "P@ssw0rd" -AsPlainText -Force
-
-    New-ADUser `
-        -GivenName $user.GivenName `
-        -Surname $user.Surname `
-        -SamAccountName $user.SamAccountName `
-        -UserPrincipalName "$($user.SamAccountName)@ecosolarsolution.local" `
-        -Name "$($user.GivenName) $($user.Surname)" `
-        -DisplayName "$($user.GivenName) $($user.Surname)" `
-        -Description $user.Description `
-        -AccountPassword $password `
-        -Enabled $true `
-        -Path $ouPath `
-        -ChangePasswordAtLogon $true
-}
-
-Write-Host "Tous les utilisateurs ont été créés avec succès."
-
-
-
-
-
-
-
 # Liste complète des utilisateurs avec leurs informations
 $users = @(
     @{GivenName="Marcy"; Surname="Hyatt"; SamAccountName="mhyatt"; OU="Atelier"; Description="Technicienne maintenance 1"},
@@ -135,23 +56,40 @@ $users = @(
     @{GivenName="Sandie"; Surname="Ebner"; SamAccountName="sebner"; OU="Dpt Administratif & Financier"; Description="Employé administratif 2"}
 )
 
-# Compteur pour les postes
-$counter = 1
+# Parcourir chaque utilisateur et créer l'ordinateur correspondant
+$counter = 1  # Compteur pour les noms d'ordinateurs
 
-# Parcourir chaque utilisateur et associer un poste
 foreach ($user in $users) {
-    $pcName = "ECL_" + $counter.ToString("D3")  # Formater le nom du PC, exemple: ECL_001
-    $ouPath = "OU=$($user.OU),DC=ecosolarsolution,DC=local"
-    
-    # Lier l'utilisateur au poste (par exemple dans PhysicalDeliveryOfficeName)
-    Set-ADUser -Identity $user.SamAccountName `
-        -Add @{PhysicalDeliveryOfficeName = $pcName}
+    $ouPath = "OU=$($user.OU),$domain"
+    $computerName = "ECL-" + $counter.ToString("D3")  # Créer un nom d'ordinateur sous la forme ECL-001, ECL-002, etc.
+    $computerAccountName = "$computerName$($domain)"
 
-    Write-Host "Utilisateur $($user.SamAccountName) a été associé au PC $pcName."
+    # Créer l'ordinateur dans Active Directory
+    try {
+        New-ADComputer `
+            -Name $computerName `
+            -SamAccountName $computerAccountName `
+            -Path $ouPath `
+            -Enabled $true `
+            -Description "Ordinateur associé à l'utilisateur $($user.SamAccountName)" `
+            -OperatingSystem "Windows 10"  # Vous pouvez ajuster l'OS selon votre environnement
+        Write-Host "Ordinateur $computerName créé avec succès."
+    }
+    catch {
+        Write-Host "Erreur lors de la création de l'ordinateur $computerName: $_"
+    }
 
-    # Incrémenter le compteur pour le prochain poste
+    # Associer l'utilisateur à l'ordinateur
+    try {
+        Set-ADComputer -Identity $computerAccountName -Description "Ordinateur pour $($user.SamAccountName)"
+        Write-Host "L'ordinateur $computerName a été associé à l'utilisateur $($user.SamAccountName)."
+    }
+    catch {
+        Write-Host "Erreur lors de l'association de l'ordinateur $computerName avec l'utilisateur $($user.SamAccountName): $_"
+    }
+
+    # Incrémenter le compteur pour le prochain ordinateur
     $counter++
 }
 
-Write-Host "Tous les utilisateurs ont été associés aux postes avec succès."
-
+Write-Host "Tous les ordinateurs ont été créés et associés aux utilisateurs."
