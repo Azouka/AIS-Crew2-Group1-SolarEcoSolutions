@@ -56,40 +56,29 @@ $users = @(
     @{GivenName="Sandie"; Surname="Ebner"; SamAccountName="sebner"; OU="Dpt Administratif & Financier"; Description="Employé administratif 2"}
 )
 
-# Parcourir chaque utilisateur et créer l'ordinateur correspondant
-$counter = 1  # Compteur pour les noms d'ordinateurs
-
+# Parcourir chaque utilisateur et le créer dans l'OU appropriée
 foreach ($user in $users) {
     $ouPath = "OU=$($user.OU),$domain"
-    $computerName = "ECL-" + $counter.ToString("D3")  # Créer un nom d'ordinateur sous la forme ECL-001, ECL-002, etc.
-    $computerAccountName = "$computerName$($domain)"
+    $password = ConvertTo-SecureString "P@ssw0rd" -AsPlainText -Force
 
-    # Créer l'ordinateur dans Active Directory
     try {
-        New-ADComputer `
-            -Name $computerName `
-            -SamAccountName $computerAccountName `
-            -Path $ouPath `
+        New-ADUser `
+            -GivenName $user.GivenName `
+            -Surname $user.Surname `
+            -SamAccountName $user.SamAccountName `
+            -UserPrincipalName "$($user.SamAccountName)@ecosolarsolution.local" `
+            -Name "$($user.GivenName) $($user.Surname)" `
+            -DisplayName "$($user.GivenName) $($user.Surname)" `
+            -Description $user.Description `
+            -AccountPassword $password `
             -Enabled $true `
-            -Description "Ordinateur associé à l'utilisateur $($user.SamAccountName)" `
-            -OperatingSystem "Windows 10"  # Vous pouvez ajuster l'OS selon votre environnement
-        Write-Host "Ordinateur $computerName créé avec succès."
+            -Path $ouPath `
+            -ChangePasswordAtLogon $true
+        Write-Host "Utilisateur $($user.SamAccountName) créé avec succès dans l'OU $ouPath."
     }
     catch {
-        Write-Host "Erreur lors de la création de l'ordinateur $computerName: $_"
+        Write-Host "Erreur lors de la création de l'utilisateur $($user.SamAccountName): $_"
     }
-
-    # Associer l'utilisateur à l'ordinateur
-    try {
-        Set-ADComputer -Identity $computerAccountName -Description "Ordinateur pour $($user.SamAccountName)"
-        Write-Host "L'ordinateur $computerName a été associé à l'utilisateur $($user.SamAccountName)."
-    }
-    catch {
-        Write-Host "Erreur lors de l'association de l'ordinateur $computerName avec l'utilisateur $($user.SamAccountName): $_"
-    }
-
-    # Incrémenter le compteur pour le prochain ordinateur
-    $counter++
 }
 
-Write-Host "Tous les ordinateurs ont été créés et associés aux utilisateurs."
+Write-Host "Tous les utilisateurs ont été créés avec succès."
