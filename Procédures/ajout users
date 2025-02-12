@@ -1,0 +1,85 @@
+$Domain = "DC=ecosolarsolution,DC=local"
+$BaseDN = "OU=Utilisateurs,$Domain"
+$PostePrefix = "ECL-"
+
+# Définition des services
+$Services = @(
+    "Direction", "Informatique", "Atelier", "Logistique/approvisionnement", 
+    "Production", "R&D/qualité", "Service commercial", "Expédition", "Dpt Administratif & Financier"
+)
+
+# Création des OUs et des groupes associés
+foreach ($Service in $Services) {
+    $OUPath = "OU=$Service,$BaseDN"
+    if (-not (Get-ADOrganizationalUnit -Filter "DistinguishedName -eq '$OUPath'" -ErrorAction SilentlyContinue)) {
+        New-ADOrganizationalUnit -Name $Service -Path $BaseDN -ProtectedFromAccidentalDeletion $false
+    }
+    
+    $GroupName = "GR_$($Service -replace '[^a-zA-Z0-9]', '_')"
+    if (-not (Get-ADGroup -Filter "Name -eq '$GroupName'" -ErrorAction SilentlyContinue)) {
+        New-ADGroup -Name $GroupName -GroupScope Global -Path $OUPath
+    }
+}
+
+# Liste des utilisateurs
+$Users = @(
+    @{Nom="Wally"; Prenom="Adam"; Service="Direction"},
+    @{Nom="Herminia"; Prenom="Oliva"; Service="Direction"},
+    @{Nom="Elijah"; Prenom="Blakley"; Service="Informatique"},
+    @{Nom="Nguyet"; Prenom="Catlett"; Service="Informatique"},
+    @{Nom="Phyllis"; Prenom="Biondo"; Service="Production"},
+    @{Nom="Davie"; Prenom="Ivan"; Service="Atelier"},
+    @{Nom="Hyatt"; Prenom="Marcy"; Service="Atelier"},
+    @{Nom="Vancleave"; Prenom="Jean"; Service="Atelier"},
+    @{Nom="Penning"; Prenom="Sharilyn"; Service="Logistique/approvisionnement"},
+    @{Nom="Przybyla"; Prenom="Leonardo"; Service="Logistique/approvisionnement"},
+    @{Nom="Bradwell"; Prenom="Teri"; Service="Logistique/approvisionnement"},
+    @{Nom="Galasso"; Prenom="Dominique"; Service="Logistique/approvisionnement"},
+    @{Nom="Waltrip"; Prenom="Antoine"; Service="Logistique/approvisionnement"},
+    @{Nom="Twiford"; Prenom="Isabelle"; Service="Production"},
+    @{Nom="Bragdon"; Prenom="Elene"; Service="Production"},
+    @{Nom="Bakley"; Prenom="Sandra"; Service="Production"},
+    @{Nom="Rubalcava"; Prenom="Jérémy"; Service="Production"},
+    @{Nom="Schewe"; Prenom="Maye"; Service="Production"},
+    @{Nom="Isenberg"; Prenom="Edmond"; Service="Production"},
+    @{Nom="Vanarsdale"; Prenom="Luc"; Service="Production"},
+    @{Nom="Tokarski"; Prenom="Laurent"; Service="Production"},
+    @{Nom="Plamondon"; Prenom="Elise"; Service="Production"},
+    @{Nom="Shoaf"; Prenom="Marion"; Service="Production"},
+    @{Nom="Garber"; Prenom="Michel"; Service="Production"},
+    @{Nom="Blalock"; Prenom="Cassandra"; Service="Production"},
+    @{Nom="Yarberry"; Prenom="Julie"; Service="Production"},
+    @{Nom="Gutter"; Prenom="Serena"; Service="Production"},
+    @{Nom="Bolden"; Prenom="Damien"; Service="Production"},
+    @{Nom="Chilcott"; Prenom="Baptiste"; Service="Production"},
+    @{Nom="Cosme"; Prenom="Melissa"; Service="Production"},
+    @{Nom="Hae"; Prenom="Patrick"; Service="Production"},
+    @{Nom="Towers"; Prenom="Thibault"; Service="Production"},
+    @{Nom="Larock"; Prenom="Caroline"; Service="Production"},
+    @{Nom="Demelo"; Prenom="Pierre"; Service="Production"},
+    @{Nom="Gerardo"; Prenom="Lucien"; Service="Production"},
+    @{Nom="Ria"; Prenom="Mathis"; Service="Production"}
+)
+
+# Création des utilisateurs et assignation à un poste
+$Index = 1
+foreach ($User in $Users) {
+    $OUPath = "OU=$($User.Service),$BaseDN"
+    $SamAccountName = ($User.Prenom.Substring(0,1) + $User.Nom).ToLower()
+    $DisplayName = "$($User.Prenom) $($User.Nom)"
+    $UserPrincipalName = "$SamAccountName@ecosolarsolution.local"
+    $Poste = "$PostePrefix$($Index.ToString("000"))"
+    
+    if (-not (Get-ADUser -Filter "SamAccountName -eq '$SamAccountName'" -ErrorAction SilentlyContinue)) {
+        New-ADUser -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -Name $DisplayName -GivenName $User.Prenom -Surname $User.Nom -Path $OUPath -AccountPassword (ConvertTo-SecureString "P@ssword123" -AsPlainText -Force) -Enabled $true
+        
+        # Associer au groupe
+        $GroupName = "GR_$($User.Service -replace '[^a-zA-Z0-9]', '_')"
+        Add-ADGroupMember -Identity $GroupName -Members $SamAccountName
+        
+        # Ajouter une description pour le poste
+        Set-ADUser -Identity $SamAccountName -Description "Poste: $Poste"
+    }
+    
+    $Index++
+}
