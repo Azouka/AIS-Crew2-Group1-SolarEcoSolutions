@@ -28,60 +28,33 @@ foreach ($OU in $OUs) {
 # Définir le domaine racine
 $domain = "DC=ecosolarsolution,DC=local"
 
-# Liste des utilisateurs et leurs OUs correspondantes
+# Liste des utilisateurs avec leurs informations
 $users = @(
-    @{FirstName="Wally"; LastName="Adam"; OU="Direction"},
-    @{FirstName="Herminia"; LastName="Oliva"; OU="Direction"},
-    @{FirstName="Elijah"; LastName="Blakley"; OU="Informatique"},
-    @{FirstName="Nguyet"; LastName="Catlett"; OU="Informatique"},
-    @{FirstName="Phyllis"; LastName="Biondo"; OU="Production"},
-    @{FirstName="Davie"; LastName="Ivan"; OU="Atelier"},
-    @{FirstName="Hyatt"; LastName="Marcy"; OU="Atelier"},
-    @{FirstName="Vancleave"; LastName="Jean"; OU="Atelier"},
-    @{FirstName="Penning"; LastName="Sharilyn"; OU="Logistique/approvisionnement"},
-    @{FirstName="Przybyla"; LastName="Leonardo"; OU="Logistique/approvisionnement"},
-    @{FirstName="Bradwell"; LastName="Teri"; OU="Logistique/approvisionnement"},
-    @{FirstName="Galasso"; LastName="Dominique"; OU="Logistique/approvisionnement"},
-    @{FirstName="Waltrip"; LastName="Antoine"; OU="Logistique/approvisionnement"},
-    @{FirstName="Twiford"; LastName="Isabelle"; OU="Production"},
-    @{FirstName="Bragdon"; LastName="Elene"; OU="Production"},
-    @{FirstName="Bakley"; LastName="Sandra"; OU="Production"},
-    @{FirstName="Rubalcava"; LastName="Jérémy"; OU="Production"},
-    @{FirstName="Schewe"; LastName="Maye"; OU="Production"},
-    @{FirstName="Isenberg"; LastName="Edmond"; OU="Production"},
-    @{FirstName="Vanarsdale"; LastName="Luc"; OU="Production"},
-    @{FirstName="Tokarski"; LastName="Laurent"; OU="Production"},
-    @{FirstName="Plamondon"; LastName="Elise"; OU="Production"},
-    @{FirstName="Shoaf"; LastName="Marion"; OU="Production"},
-    @{FirstName="Garber"; LastName="Michel"; OU="Production"},
-    @{FirstName="Blalock"; LastName="Cassandra"; OU="Production"},
-    @{FirstName="Yarberry"; LastName="Julie"; OU="Production"},
-    @{FirstName="Gutter"; LastName="Serena"; OU="Production"},
-    @{FirstName="Bolden"; LastName="Damien"; OU="Production"},
-    @{FirstName="Chilcott"; LastName="Baptiste"; OU="Production"},
-    @{FirstName="Cosme"; LastName="Melissa"; OU="Production"},
-    @{FirstName="Hae"; LastName="Patrick"; OU="Production"},
-    @{FirstName="Towers"; LastName="Thibault"; OU="Production"},
-    @{FirstName="Larock"; LastName="Caroline"; OU="Production"},
-    @{FirstName="Demelo"; LastName="Pierre"; OU="Production"},
-    @{FirstName="Gerardo"; LastName="Lucien"; OU="Production"},
-    @{FirstName="Ria"; LastName="Mathis"; OU="Production"},
-    @{FirstName="Letts"; LastName="Valérie"; OU="R&D/qualité"},
-    @{FirstName="Babb"; LastName="Violaine"; OU="R&D/qualité"},
-    @{FirstName="Velva"; LastName="William"; OU="R&D/qualité"}
+    @{GivenName="Wally"; Surname="Adam"; Title=""; OU="Direction"},
+    @{GivenName="Herminia"; Surname="Oliva"; Title="Assistante DG"; OU="Direction"},
+    @{GivenName="Elijah"; Surname="Blakley"; Title="Informaticien"; OU="Informatique"},
+    @{GivenName="Nguyet"; Surname="Catlett"; Title="Stagiaire alternance"; OU="Informatique"},
+    @{GivenName="Phyllis"; Surname="Biondo"; Title="Directeur production - DG Adjoint"; OU="Production"},
+    @{GivenName="Davie"; Surname="Ivan"; Title="Responsable atelier"; OU="Atelier"},
+    @{GivenName="Hyatt"; Surname="Marcy"; Title="Technicienne maintenance 1"; OU="Atelier"}
 )
 
-# Assigner chaque utilisateur à son OU
+# Mot de passe par défaut pour les utilisateurs
+$password = ConvertTo-SecureString "P@ssw0rd123" -AsPlainText -Force
+
+# Création des utilisateurs
 foreach ($user in $users) {
-    $username = "$($user.FirstName).$($user.LastName)"
-    $userDN = "CN=$username,OU=$($user.OU),$domain"
+    $samAccountName = ($user.GivenName.Substring(0,1) + $user.Surname).ToLower()
+    $userPath = "OU=$($user.OU),$domain"
     
-    $existingUser = Get-ADUser -Filter "GivenName -eq '$($user.FirstName)' -and Surname -eq '$($user.LastName)'" -ErrorAction SilentlyContinue
-    
-    if ($existingUser) {
-        Move-ADObject -Identity $existingUser.DistinguishedName -TargetPath "OU=$($user.OU),$domain"
-        Write-Output "Utilisateur $username déplacé dans OU=$($user.OU)."
+    if (-not (Get-ADUser -Filter "SamAccountName -eq '$samAccountName'" -ErrorAction SilentlyContinue)) {
+        New-ADUser -GivenName $user.GivenName -Surname $user.Surname -Name "$($user.GivenName) $($user.Surname)" `
+        -SamAccountName $samAccountName -UserPrincipalName "$samAccountName@ecosolarsolution.local" `
+        -Path $userPath -Title $user.Title -AccountPassword $password -Enabled $true `
+        -ChangePasswordAtLogon $true
+        Write-Output "Utilisateur '$($user.GivenName) $($user.Surname)' ajouté dans l'OU '$($user.OU)'."
     } else {
-        Write-Output "Utilisateur $username non trouvé dans l'AD."
+        Write-Output "Utilisateur '$($user.GivenName) $($user.Surname)' existe déjà."
     }
 }
+
