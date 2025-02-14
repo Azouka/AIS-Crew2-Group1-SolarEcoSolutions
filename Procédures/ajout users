@@ -1,23 +1,25 @@
-# Vérification du module Active Directory
-if (-not (Get-Module -Name ActiveDirectory -ListAvailable)) {
-    Write-Host "Le module Active Directory n'est pas installé. Veuillez l'installer avant d'exécuter ce script."
-    exit
+# Définir le nom et le chemin de l'OU
+$OUName = "Ordinateurs"
+$OUPath = "OU=$OUName,DC=ecosolarsolution,DC=local"
+
+# Vérifier si l'OU existe déjà
+if (-not (Get-ADOrganizationalUnit -Filter "DistinguishedName -eq '$OUPath'")) {
+    New-ADOrganizationalUnit -Name $OUName -Path "DC=ecosolarsolution,DC=local"
+    Write-Host "OU $OUName créée avec succès."
+} else {
+    Write-Host "OU $OUName existe déjà."
 }
 
-# Définition des paramètres
-$domain = "Ecosolarsolution.local"
-$ou = "OU=Computers,DC=Ecosolarsolution,DC=local"
-
-# Création des 60 ordinateurs
-for ($i = 1; $i -le 60; $i++) {
-    $computerName = ("ECL_{0:D3}" -f $i)  # Génération des noms ECL_001 à ECL_060
-
-    # Vérification si l'ordinateur existe déjà
-    if (Get-ADComputer -Filter {Name -eq $computerName}) {
-        Write-Host "L'ordinateur $computerName existe déjà, il sera ignoré." -ForegroundColor Yellow
+# Ajouter 60 ordinateurs dans l'OU
+For ($i=1; $i -le 60; $i++) {
+    $ComputerName = "ECL_" + ($i.ToString("000")) # Génère ECL_001 à ECL_060
+    $ComputerPath = "CN=$ComputerName,$OUPath"
+    
+    # Vérifier si l'ordinateur existe déjà
+    if (-not (Get-ADComputer -Filter {Name -eq $ComputerName})) {
+        New-ADComputer -Name $ComputerName -Path $OUPath -Enabled $true
+        Write-Host "Ordinateur $ComputerName créé avec succès."
     } else {
-        # Création de l'ordinateur dans l'OU Computers
-        New-ADComputer -Name $computerName -Path $ou -Enabled $true -PassThru
-        Write-Host "Ordinateur $computerName créé avec succès." -ForegroundColor Green
+        Write-Host "L'ordinateur $ComputerName existe déjà, il sera ignoré."
     }
 }
