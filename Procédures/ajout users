@@ -1,25 +1,33 @@
-# Définir le nom et le chemin de l'OU
+# Définition des variables
 $OUName = "Ordinateurs"
 $OUPath = "OU=$OUName,DC=ecosolarsolution,DC=local"
 
-# Vérifier si l'OU existe déjà
-if (-not (Get-ADOrganizationalUnit -Filter "DistinguishedName -eq '$OUPath'")) {
-    New-ADOrganizationalUnit -Name $OUName -Path "DC=ecosolarsolution,DC=local"
+# Vérifier et créer l'OU si elle n'existe pas
+if (-not (Get-ADOrganizationalUnit -Filter {Name -eq $OUName})) {
+    New-ADOrganizationalUnit -Name $OUName -Path "DC=ecosolarsolution,DC=local" -ProtectedFromAccidentalDeletion $false
+    Start-Sleep -Seconds 2
     Write-Host "OU $OUName créée avec succès."
 } else {
     Write-Host "OU $OUName existe déjà."
 }
 
-# Ajouter 60 ordinateurs dans l'OU
+# Étape 1 : Supprimer les ordinateurs mal placés
 For ($i=1; $i -le 60; $i++) {
-    $ComputerName = "ECL_" + ($i.ToString("000")) # Génère ECL_001 à ECL_060
-    $ComputerPath = "CN=$ComputerName,$OUPath"
+    $ComputerName = "ECL_" + ($i.ToString("000"))
+    $Computer = Get-ADComputer -Filter {Name -eq $ComputerName}
     
-    # Vérifier si l'ordinateur existe déjà
+    if ($Computer) {
+        Remove-ADComputer -Identity $Computer -Confirm:$false
+        Write-Host "Ordinateur $ComputerName supprimé."
+    }
+}
+
+# Étape 2 : Recréer les ordinateurs dans l'OU correcte
+For ($i=1; $i -le 60; $i++) {
+    $ComputerName = "ECL_" + ($i.ToString("000"))
+    
     if (-not (Get-ADComputer -Filter {Name -eq $ComputerName})) {
         New-ADComputer -Name $ComputerName -Path $OUPath -Enabled $true
-        Write-Host "Ordinateur $ComputerName créé avec succès."
-    } else {
-        Write-Host "L'ordinateur $ComputerName existe déjà, il sera ignoré."
+        Write-Host "Ordinateur $ComputerName créé dans l'OU $OUName."
     }
 }
