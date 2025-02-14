@@ -13,8 +13,9 @@ For ($i=1; $i -le 60; $i++) {
     $Computer = Get-ADComputer -Filter {Name -eq $ComputerName}
 
     if ($User -and $Computer) {
-        # Associer l'ordinateur à l'utilisateur via l'attribut ms-MCS-PrimaryComputer
-        Set-ADUser -Identity $User -Add @{ms-Mcs-PrimaryComputer=$Computer.DistinguishedName}
+        # Correction : ajout correct de l'attribut ms-Mcs-PrimaryComputer
+        Set-ADUser -Identity $User.SamAccountName -Add @{ms-Mcs-PrimaryComputer=$Computer.DistinguishedName}
+        
         Write-Host "L'utilisateur $UserName est maintenant associé à l'ordinateur $ComputerName."
     } else {
         Write-Host "⚠️ Problème : $UserName ou $ComputerName n'existe pas."
