@@ -1,27 +1,23 @@
-# Définir le nom de domaine
-$domain = "Ecosolarsolution.local"
-
-# Définir le préfixe des noms d'ordinateurs
-$prefix = "ECL_"
-
-# Définir l'OU (Unité Organisationnelle) où les ordinateurs seront créés
-$ou = "OU=Computers,DC=Ecosolarsolution,DC=local"  # Remplacez par l'OU souhaitée
-
-# Boucle pour créer 60 ordinateurs
-for ($i = 1; $i -le 60; $i++) {
-    # Formater le numéro de l'ordinateur (ex: 001, 002, ..., 060)
-    $computerNumber = "{0:D3}" -f $i
-
-    # Créer le nom de l'ordinateur
-    $computerName = "$prefix$computerNumber"
-
-    # Créer l'objet ordinateur dans l'AD
-    try {
-        New-ADComputer -Name $computerName -Path $ou -Enabled $true
-        Write-Host "Ordinateur créé : $computerName"
-    } catch {
-        Write-Host "Erreur lors de la création de l'ordinateur $computerName : $_"
-    }
+# Vérification du module Active Directory
+if (-not (Get-Module -Name ActiveDirectory -ListAvailable)) {
+    Write-Host "Le module Active Directory n'est pas installé. Veuillez l'installer avant d'exécuter ce script."
+    exit
 }
 
-Write-Host "Création des ordinateurs terminée."
+# Définition des paramètres
+$domain = "Ecosolarsolution.local"
+$ou = "OU=Computers,DC=Ecosolarsolution,DC=local"
+
+# Création des 60 ordinateurs
+for ($i = 1; $i -le 60; $i++) {
+    $computerName = ("ECL_{0:D3}" -f $i)  # Génération des noms ECL_001 à ECL_060
+
+    # Vérification si l'ordinateur existe déjà
+    if (Get-ADComputer -Filter {Name -eq $computerName}) {
+        Write-Host "L'ordinateur $computerName existe déjà, il sera ignoré." -ForegroundColor Yellow
+    } else {
+        # Création de l'ordinateur dans l'OU Computers
+        New-ADComputer -Name $computerName -Path $ou -Enabled $true -PassThru
+        Write-Host "Ordinateur $computerName créé avec succès." -ForegroundColor Green
+    }
+}
