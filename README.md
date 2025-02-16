@@ -1,6 +1,6 @@
 # 🌞 EcoSolar Solutions - Infrastructure Sécurisée 🔐 
 
-## Ce projet et présenté par :
+## Ce projet est présenté par :
 
 [Seif-Dine](https://github.com/Azouka)
 <br>[Jonathan](https://github.com/Tropa-001)
@@ -10,7 +10,7 @@
  
  # 📌 Sommaire :
 
-*EcoSolar Solutions** est une entreprise spécialisée dans les solutions énergétiques durables. 
+*EcoSolar Solutions* est une entreprise spécialisée dans les solutions énergétiques durables. 
 Dans un monde où les cyberattaques sont de plus en plus fréquentes, il est essentiel de mettre en place une infrastructure IT robuste et sécurisée pour protéger les données et garantir la continuité des services.  
 
 ## 🎯 Objectif du projet  
