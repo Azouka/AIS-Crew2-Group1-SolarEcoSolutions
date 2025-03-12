@@ -6,8 +6,8 @@ Par exemple: Procédure_InstallationAD_V3_Informatique
 
 # CONVENTION DE NOMMAGE DES MACHINES
 
-**TYPE_OS_SOLUTION**
-Par exemple: SRV-linus-GLPI
+**TYPE-OS-SOLUTION**
+Par exemple: SRV-linux-GLPI
 
 # Serveur Xivo
 
