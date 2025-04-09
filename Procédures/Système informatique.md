@@ -17,3 +17,7 @@ Console admin: root/Wilderxivo
 # serveur mail
 
 postmaster@mail.ess.net / wildermail
+
+# Serveur DHCP
+
+Administrateur/Wilder9
