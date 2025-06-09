@@ -2,7 +2,7 @@
 
 ## Ce projet est présenté par :
 
-[Azouka](https://github.com/Azouka)
+[Seif-Dine](https://github.com/Azouka)
 <br>[Jonathan](https://github.com/Tropa-001)
 <br>[Brice](https://github.com/bbrice28)
 
