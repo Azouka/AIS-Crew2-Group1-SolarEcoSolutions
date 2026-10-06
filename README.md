@@ -6,7 +6,7 @@
 <br>[Jonathan](https://github.com/Tropa-001)
 <br>[Brice](https://github.com/bbrice28)
 
- Notre école la Wild Code School nous à demander de mettre au point un projet pour répondre à un besoin dans l'entreprise EcoSolar Solutions (fictive). 
+Projet pour répondre à un besoin dans l'entreprise EcoSolar Solutions (fictive). 
  
  # 📌 Sommaire :
 
